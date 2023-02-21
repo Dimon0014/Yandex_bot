@@ -60,7 +60,7 @@ def send_message(bot, message):
     try:
         logger.debug(f'Start send message - {message}.')
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        logger.debug(f'Message successfully sent.')
+        logger.debug('Message successfully sent.')
     except Exception as error:
         logger.error(error, exc_info=True)
 
