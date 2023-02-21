@@ -38,7 +38,7 @@ HOMEWORK_VERDICTS = {
     'rejected': 'Работа проверена: у ревьюера есть замечания.'
 }
 
-ERRORS_RAISE_COUNT: Dict[Exception, bool] = {}
+ERROR_HAPPENED: Dict[type, bool] = {}
 
 
 def check_tokens():
@@ -58,8 +58,9 @@ def check_tokens():
 def send_message(bot, message):
     """Send message to telegram."""
     try:
+        logger.debug(f'Start send message - {message}.')
         bot.send_message(TELEGRAM_CHAT_ID, message)
-        logger.debug(f'Successful sent message - {message}.')
+        logger.debug(f'Message successfully sent.')
     except Exception as error:
         logger.error(error, exc_info=True)
 
@@ -80,10 +81,10 @@ def get_api_answer(timestamp):
 
 
 def check_response(response):
-    """Check available keys in response."""
-    try:
+    """Check type of response, available keys."""
+    if isinstance(response, dict):
         response_keys = response.keys()
-    except Exception:
+    else:
         raise TypeError('Object response should be have type dict.')
     for key in EXPECTED_RESPONSE_KEYS:
         if key not in response_keys:
@@ -113,16 +114,6 @@ def get_current_time():
     return int(time.time())
 
 
-def log_error_and_send_message(bot, message, error=None):
-    """Log error and send message if error happened at first."""
-    logger.error(error, exc_info=True)
-    if error and not ERRORS_RAISE_COUNT.get(error):
-        ERRORS_RAISE_COUNT[error] = True
-    if ERRORS_RAISE_COUNT.get(error):
-        send_message(bot, message)
-        ERRORS_RAISE_COUNT[error] = False
-
-
 def main():
     """Main program logic."""
     check_tokens()
@@ -141,30 +132,11 @@ def main():
                 message = parse_status(homeworks[0])
                 send_message(bot, message)
                 timestamp = get_current_time()
-        except requests.RequestException as error:
-            log_error_and_send_message(
-                bot,
-                error,
-                ApiAnswerError.__name__
-            )
-        except TypeError as error:
-            log_error_and_send_message(
-                bot,
-                error,
-                TypeError.__name__
-            )
-        except HomeworkError as error:
-            log_error_and_send_message(
-                bot,
-                error,
-                HomeworkError.__name__
-            )
         except Exception as error:
-            log_error_and_send_message(
-                bot,
-                f'Сбой в работе программы: {error}.'
-            )
-            exit()
+            logger.error(error, exc_info=True)
+            if not ERROR_HAPPENED.get(type(error)):
+                send_message(bot, f'Сбой в работе программы: {error}.')
+                ERROR_HAPPENED[type(error)] = True
         try:
             time.sleep(RETRY_PERIOD)
         except KeyboardInterrupt:
