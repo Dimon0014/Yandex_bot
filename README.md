@@ -1,37 +1,53 @@
-# API Telegram bot for check homework status
+# API Telegram bot
 
-Evry fixed time(can be adjusted) send request to API for checking homework status.
+Every fixed time send request to Yandex API for status.
 If status changed send telegram message on your account through Telegram Bot.
 
 ## Features
 
-- All token storaged in local storage env.
-- Console logging.
-- In case of critical issue was send message to Telegram account.
+- All token in local storage '.env';
+- Console logging;
+- In case of critical issue was send message to your Telegram account.
 
 
-## Installation
+## Installation (for Windows)
 
-Install the dependencies.
-
+Clone repository in your directory
 ```sh
-git clone ...
-python3 -m venv venv
+git clone git@github.com:KuzenkovAG/telegram-bot-yandex.git
+```
+Install environment
+```sh
+python -m venv venv
+```
+Activate it
+```sh
+source venv/Scripts/activate
+```
+Install requirements
+```sh
 pip install -r requirements.txt
 ```
-
-## Tokens
-
-Create .env file in directory
+Create .env
 ```sh
 touch .env
 ```
-Open .env and add 3 rows
+Open .env and add information about tokens
 ```sh
-PRACTICUM_TOKEN = YOUR_TOCEN
-TELEGRAM_TOKEN = YOUR_TELEGRAM_TOCEN
-TELEGRAM_CHAT_ID = YOUR_CHAT_ID
+PRACTICUM_TOKEN = YOUR_TOKEN
+TELEGRAM_TOKEN = YOUR_TELEGRAM_TOKEN
+TELEGRAM_CHAT_ID = YOUR_TELEGRAM_CHAT_ID
 ```
+
+```sh
+python homework.py
+```
+
+How to know telegram chat id:
+1. Find bot https://t.me/userinfobot;
+2. Send any message;
+3. It will send your telegram ID.
+
 
 ## License
 
