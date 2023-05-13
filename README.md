@@ -18,6 +18,9 @@ git clone git@github.com:KuzenkovAG/telegram-bot-yandex.git
 ```
 Install environment
 ```sh
+cd telegram-bot-yandex/
+```
+```sh
 python -m venv venv
 ```
 Activate it
